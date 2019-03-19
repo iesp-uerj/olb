@@ -1,20 +1,12 @@
 # olb
 
-The goal of olb is to ...
+`ols` provides several functions to extract, parse, and analyze legislative activity data regarding bills introduced in the [Brazilian Chamber of Deputies](https://www.camara.leg.br/).
 
-## Installation
+## Install
 
-You can install the released version of olb from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("olb")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+To install the current version of the `olb`, use:
 
 ``` r
-## basic example code
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("meirelesff/olb")
 ```
-
