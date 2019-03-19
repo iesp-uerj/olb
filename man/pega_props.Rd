@@ -7,7 +7,7 @@
 pega_props(year)
 }
 \arguments{
-\item{year}{Year in AA format (\code{character} or \code{numeric}).}
+\item{year}{Year in YYYY format (\code{character} or \code{numeric}).}
 }
 \value{
 A \code{data.frame} containing information for each bill proposed in a given year.

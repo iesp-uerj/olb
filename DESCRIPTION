@@ -17,6 +17,8 @@ Imports:
     httr,
     dplyr,
     purrr,
-    utils
+    utils,
+    rmarkdown,
+    rlang
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
