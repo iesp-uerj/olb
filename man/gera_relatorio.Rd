@@ -4,12 +4,18 @@
 \alias{gera_relatorio}
 \title{Produce a report of legislative activity in a given period}
 \usage{
-gera_relatorio(ini, end)
+gera_relatorio(ini, end, titulo, autor, out_dir = getwd())
 }
 \arguments{
 \item{ini}{Starting date in the YYYY-MM-DD format (\code{character}).}
 
 \item{end}{Ending date in the YYYY-MM-DD format (\code{character}).}
+
+\item{titulo}{Title of the report.}
+
+\item{autor}{Author of the report (defaults to OLB).}
+
+\item{out_dir}{Output directory to store the report.}
 }
 \value{
 A report and its corresponding .Rmd file.

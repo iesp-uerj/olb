@@ -1,16 +1,29 @@
 ---
-title: "Relatorio"
-output: html_document
 params:
   ini: "2019-01-01"
   end: "2019-02-01"
+  set_title: "Relatório de Acompanhamento"
+  set_author: "Observatório do Legislativo Brasileiro"
+title: "`r params$set_title`"
+author: "`r params$set_author`"
+output: 
+  html_document:
+    toc_float: true
+    toc: true
+    toc_depth: 1
+    smooth_scroll: true
+    number_sections: false
+    theme: journal
+    keep_md: true
+
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Intro
+## Apresentação
 
 Texto.
 
@@ -20,4 +33,13 @@ Texto.
 head(proposicoes(ini, end))
 ```
 
+# Quarterly Results {.tabset}
+
+## By Product
+
+(tab content)
+
+## By Region
+
+(tab content)
 
