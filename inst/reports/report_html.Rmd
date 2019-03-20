@@ -4,6 +4,7 @@ params:
   end: "2019-02-01"
   set_title: "Relatório de Acompanhamento"
   set_author: "Observatório do Legislativo Brasileiro"
+  tema: "Economia"
 title: "`r params$set_title`"
 author: "`r params$set_author`"
 output: 
@@ -13,33 +14,128 @@ output:
     toc_depth: 1
     smooth_scroll: true
     number_sections: false
-    theme: journal
+    theme: readable
     keep_md: true
-
-
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
+# Opts
 knitr::opts_chunk$set(echo = TRUE)
+
+# Pacotes
+library(highcharter)
+library(tidyverse)
+
+# Dados
+props <- proposicoes(params$ini, params$end) %>%
+  filter(tema == params$tema)
 ```
 
-## Apresentação
+# Apresentação
 
-Texto.
+Este é um relatório de acompanhamento de novas proposições (especificamente, PL, PLP, PEC e MPV). O objetivo dele é exibir de forma simples, com tabelas e visualizações interativas, projetos apresentados em um dado período e por tema na Câmara dos Deputados -- usando a classificação temática do [Centro de Documentação e Informação da Câmara](https://www2.camara.leg.br/a-camara/estruturaadm/diretorias/diretoria-legislativa/estrutura-1/cedi). 
 
-# Grafico
+Todos os dados são extraídos diretamente do [Portal de Dados Abertos da Câmara](https://dadosabertos.camara.leg.br/), que são atualizados diariamente. Para fazer esse trabalho, o pacote [olb](https://github.com/meirelesff) extrai os dados necessários, limpa e consolida as informações para, então, produzir automaticamente um documento final. Basta uma linha de código e poucos segundos para gerar um novo relatório. Exemplo:
 
-```{r}
-head(proposicoes(ini, end))
+```{r, eval=FALSE}
+olb::gera_relatorio(ini = "2019-02-01", end = "2019-03-01", tema = "Defesa e Segurança")
 ```
 
-# Quarterly Results {.tabset}
+O resultado é exatamente este *website*, que pode ser customizado para adequar texto e seções. Para escolher o tema de um relatório, basta modificar o argumento da função `gera_relatorio`, passando a ele o nome do tema desejado (i.g., `tema = "Educação"`). Uma lista com todos os temas disponibilizados pela Câmara segue abaixo:
 
-## By Product
 
-(tab content)
 
-## By Region
 
-(tab content)
+Daqui até o fim do documento, segue um exemplo de seções que são geradas automaticamente.
+
+# Proposições
+
+No período entre `r format(as.Date(params$ini), "%d/%m/%Y")` e `r format(as.Date(params$end), "%d/%m/%Y")`, `r nrow(props)` proposições legislativas na área de `r params$tema` foram introduzidas. No gráfico abaixo, é possível visualizar o número de proposições introduzidas por data.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+x <- props %>%
+  mutate(dataApresentacao = as.Date(dataApresentacao)) %>%
+  group_by(dataApresentacao) %>%
+  summarise(n = n())
+
+highchart() %>% 
+  hc_title(text = "Proposições introduzidas no período") %>%
+  hc_subtitle(text = paste0("Tema: ", params$tema)) %>%
+  hc_xAxis(categories = x$dataApresentacao) %>% 
+  hc_add_series(name = "Proposições", data = x$n) %>%
+  hc_colors(c("#4582ec")) %>%
+  hc_credits(enabled = TRUE, # add credits
+             text = "www.olb.org.br",
+             href = "http://olb.org.br/")
+
+```
+
+
+# Detalhes das proposições {.tabset}
+
+Nas abas abaixo, é possível consultar informações específicas das proposições por tipo (Projeto de Lei, Medida Provisória, etc).
+
+
+
+## Projetos de Lei
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+props %>%
+  filter(siglaTipo == "PL") %>%
+  mutate(prop = paste0("PL ", numero, "/", ano)) %>%
+  mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  select(prop, data, ementa, urlInteiroTeor) %>%
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+```
+
+
+## Medidas Provisórias
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+props %>%
+  filter(siglaTipo == "PEC") %>%
+  mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
+  mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  select(prop, data, ementa, urlInteiroTeor) %>%
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+```
+
+
+## Projetos de Lei Complementar
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+props %>%
+  filter(siglaTipo == "PLP") %>%
+  mutate(prop = paste0("PLP ", numero, "/", ano)) %>%
+  mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  select(prop, data, ementa, urlInteiroTeor) %>%
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+```
+
+
+## Projeos de Emenda Constitucional
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+props %>%
+  filter(siglaTipo == "PEC") %>%
+  mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
+  mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  select(prop, data, ementa, urlInteiroTeor) %>%
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+```
+
+
+# Proposições salientes
+
+
+
+
+
+
+
 

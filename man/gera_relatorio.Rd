@@ -4,7 +4,9 @@
 \alias{gera_relatorio}
 \title{Produce a report of legislative activity in a given period}
 \usage{
-gera_relatorio(ini, end, titulo, autor, out_dir = getwd())
+gera_relatorio(ini, end, titulo = "Relatório de Acompanhamento",
+  autor = "Observatório do Legislativo Brasileiro", out_dir = getwd(),
+  tema = "Economia")
 }
 \arguments{
 \item{ini}{Starting date in the YYYY-MM-DD format (\code{character}).}

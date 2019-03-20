@@ -13,13 +13,15 @@
 #'
 #' @export
 
-gera_relatorio <- function(ini, end, titulo, autor, out_dir = getwd()) {
+gera_relatorio <- function(ini, end, titulo = "Relatório de Acompanhamento",
+                           autor = "Observatório do Legislativo Brasileiro", out_dir = getwd(),
+                           tema = "Economia") {
 
   rmarkdown::render(
     system.file("reports", "report_html.Rmd", package = "olb"),
     envir = new.env(),
     encoding = "UTF-8",
-    params = list(ini = ini, end = end, set_author = autor, set_title = titulo),
+    params = list(ini = ini, end = end, set_author = autor, set_title = titulo, tema = tema),
     output_dir = out_dir,
     output_file = paste0("relatorio_", ini, "_", end, ".html")
   )
