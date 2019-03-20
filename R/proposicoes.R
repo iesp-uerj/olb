@@ -14,46 +14,24 @@
 
 proposicoes <- function(ini, end){
 
+  # Inputs
   ini <- as.POSIXct(ini)
   end <- as.POSIXct(end)
+  stopifnot(ini > as.POSIXct("1985-01-01") & end <= lubridate::today())
 
-  #stopifnot(
-  #
-  #)
-
+  # Gather data
   message("\nCollecting necessary data (this may take a while)...")
+  props <- lubridate::year(ini):lubridate::year(end) %>%
+    purrr::map(pega_props) %>%
+    dplyr::bind_rows()
 
-  # Scenario 1: ini date > 2018-12-31
-  if(ini > as.POSIXct("2018-12-31")){
+  temas <- lubridate::year(ini):lubridate::year(end) %>%
+    purrr::map(pega_tema) %>%
+    dplyr::bind_rows()
 
-    proposicoes <- pega_props(2019) %>%
-      dplyr::left_join(
-        pega_tema(2019),
-        by = c("ano" = "ano", "numero" = "numero", "siglaTipo" = "siglaTipo")
-      ) %>%
-      dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
-  }
-
-  # Scenario 2: ini date <= 2018-12-31 & end date > 2018-12-31
-  else if(ini <= as.POSIXct("2018-12-31") & end > as.POSIXct("2018-12-31")) {
-
-    proposicoes <- pega_props(2019) %>%
-      dplyr::left_join(
-        pega_tema(2019),
-        by = c("ano" = "ano", "numero" = "numero", "siglaTipo" = "siglaTipo")
-      ) %>%
-      dplyr::bind_rows(propos) %>%
-      dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
-  }
-
-  # Scenario 3: ini and end <= 2018-12-31
-  else if(ini <= as.POSIXct("2018-12-31") & end <= as.POSIXct("2018-12-31")) {
-
-    proposicoes <- propos %>%
-      dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
-  }
-
+  # Return
   message("Done.\n")
-  proposicoes
+  dplyr::left_join(props, temas, by = c("ano" = "ano", "numero" = "numero", "siglaTipo" = "siglaTipo")) %>%
+      dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
 }
 

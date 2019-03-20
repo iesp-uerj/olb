@@ -27,7 +27,7 @@ pega_props <- function(year){
                     .data$ementa, .data$ementaDetalhada, .data$keywords, .data$urlInteiroTeor,
                     .data$ultimoStatus_dataHora, .data$ultimoStatus_siglaOrgao, .data$ultimoStatus_regime,
                     .data$ultimoStatus_descricaoTramitacao) %>%
-      dplyr::filter(.data$siglaTipo %in% c("PL", "PLP", "PEC", "PLV", "MPV"))
+      dplyr::filter(.data$siglaTipo %in% c("PL", "PLP", "PEC", "MPV"))
   )
 }
 
