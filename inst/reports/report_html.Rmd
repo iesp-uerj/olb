@@ -1,0 +1,23 @@
+---
+title: "Relatorio"
+output: html_document
+params:
+  ini: "2019-01-01"
+  end: "2019-02-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Intro
+
+Texto.
+
+# Grafico
+
+```{r}
+head(proposicoes(ini, end))
+```
+
+

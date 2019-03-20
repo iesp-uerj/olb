@@ -5,14 +5,24 @@
 #'
 #' @param ini Starting date in the YYYY-MM-DD format (\code{character}).
 #' @param end Ending date in the YYYY-MM-DD format (\code{character}).
-#' @param format Output format (\code{character}, valid options are 'pdf' and 'html').
 #'
 #' @return A report and its corresponding .Rmd file.
 #'
 #' @export
 
-gera_relatorio <- function(ini, end, format){
-
-
-
+gera_relatorio <- function(ini, end) {
+  rmarkdown::render(
+    system.file("reports", "report_html.Rmd", package = "olb"),
+    envir = new.env(),
+    encoding = "UTF-8",
+    params = list(
+      ini = ini,
+      end = end
+    ),
+    output_file = paste0("Relatorio -", ini, " - ", end, ".html")
+  )
 }
+
+
+
+
