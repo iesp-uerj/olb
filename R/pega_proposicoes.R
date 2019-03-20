@@ -5,6 +5,7 @@
 #'
 #' @param year Year in YYYY format (\code{character} or \code{numeric}).
 #'
+#' @importFrom rlang .data
 #'
 #' @return A \code{data.frame} containing information for each bill proposed in a given year.
 #'
@@ -21,7 +22,12 @@ pega_props <- function(year){
   suppressMessages(
 
     sprintf("https://dadosabertos.camara.leg.br/arquivos/proposicoes/csv/proposicoes-%s.csv", year) %>%
-      readr::read_delim(delim = ";")
+      readr::read_delim(delim = ";") %>%
+      dplyr::select(.data$ano, .data$id, .data$numero, .data$siglaTipo, .data$dataApresentacao,
+                    .data$ementa, .data$ementaDetalhada, .data$keywords, .data$urlInteiroTeor,
+                    .data$ultimoStatus_dataHora, .data$ultimoStatus_siglaOrgao, .data$ultimoStatus_regime,
+                    .data$ultimoStatus_descricaoTramitacao) %>%
+      dplyr::filter(.data$siglaTipo %in% c("PL", "PLP", "PEC", "PLV", "MPV"))
   )
 }
 

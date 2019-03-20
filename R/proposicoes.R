@@ -23,14 +23,29 @@ proposicoes <- function(ini, end){
   if(ini > as.POSIXct("2018-12-31")){
 
     proposicoes <- pega_props(2019) %>%
+      dplyr::left_join(
+        pega_tema(2019),
+        by = c("ano" = "ano", "numero" = "numero", "siglaTipo" = "siglaTipo")
+      ) %>%
       dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
   }
 
-  # Scenario 2: ini date <= 2018-12-31
-  else {
+  # Scenario 2: ini date <= 2018-12-31 & end date > 2018-12-31
+  else if(ini <= as.POSIXct("2018-12-31") & end > as.POSIXct("2018-12-31")) {
 
     proposicoes <- pega_props(2019) %>%
+      dplyr::left_join(
+        pega_tema(2019),
+        by = c("ano" = "ano", "numero" = "numero", "siglaTipo" = "siglaTipo")
+      ) %>%
       dplyr::bind_rows(propos) %>%
+      dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
+  }
+
+  # Scenario 3: ini and end <= 2018-12-31
+  else if(ini <= as.POSIXct("2018-12-31") & end <= as.POSIXct("2018-12-31")) {
+
+    proposicoes <- propos %>%
       dplyr::filter(.data$dataApresentacao >= ini & .data$dataApresentacao <= end)
   }
 

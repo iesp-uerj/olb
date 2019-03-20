@@ -2,6 +2,7 @@
 
 export("%>%")
 export(pega_props)
+export(pega_tema)
 export(proposicoes)
 export(tramitacao)
 importFrom(magrittr,"%>%")
