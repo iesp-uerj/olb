@@ -1,7 +1,7 @@
 #' Extract legislative bills' classification
 #'
 #' @description
-#' \code{pega_propos()} is a convenience function used to download data on legislative bills's
+#' \code{pega_tema()} is a convenience function used to download data on legislative bills's
 #' classification from the Brazilian Chamber of Deputies' website.
 #'
 #' @param year Year in YYYY format (\code{character} or \code{numeric}).
@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Get information on all bills in 2010
+#' # Get information for all bills in 2010
 #' pega_tema(2010)
 #' }
 #'

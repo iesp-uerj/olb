@@ -17,6 +17,10 @@ proposicoes <- function(ini, end){
   ini <- as.POSIXct(ini)
   end <- as.POSIXct(end)
 
+  #stopifnot(
+  #
+  #)
+
   message("\nCollecting necessary data (this may take a while)...")
 
   # Scenario 1: ini date > 2018-12-31
