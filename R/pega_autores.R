@@ -6,6 +6,9 @@
 #'
 #' @param year Year in YYYY format (\code{character} or \code{numeric}).
 #'
+#' @importFrom rlang .data
+#' @importFrom stats setNames
+#'
 #' @return A \code{data.frame}.
 #'
 #' @examples
@@ -21,6 +24,9 @@ pega_autores <- function(year){
   suppressMessages(
 
     sprintf("https://dadosabertos.camara.leg.br/arquivos/proposicoesAutores/csv/proposicoesAutores-%s.csv", year) %>%
-      readr::read_delim(delim = ";")
+      readr::read_delim(delim = ";") %>%
+      dplyr::select(.data$idProposicao, .data$idDeputadoAutor, .data$tipoAutor,
+                    .data$nomeAutor, .data$siglaPartidoAutor, .data$siglaUFAutor) %>%
+      stats::setNames(c("id", "id_parlamentar", "tipo", "nome", "partido", "uf"))
   )
 }

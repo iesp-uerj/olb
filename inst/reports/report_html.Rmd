@@ -7,17 +7,17 @@ params:
   tema: "Economia"
 title: "`r params$set_title`"
 author: "`r params$set_author`"
+date: "`r paste0(params$tema, ' (', format(as.Date(params$ini), '%d/%m/%Y'), ' - ', format(as.Date(params$end), '%d/%m/%Y'), ')')`"
 output: 
   html_document:
-    toc_float: true
     toc: true
+    toc_float:
+      smooth_scroll: true
     toc_depth: 1
-    smooth_scroll: true
     number_sections: false
     theme: readable
     highlight: tango
     keep_md: true
-    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +30,11 @@ library(tidyverse)
 library(DT)
 
 # Dados
-props <- proposicoes(params$ini, params$end) %>%
+x <- proposicoes(params$ini, params$end)
+
+props <- x$props %>%
+  filter(tema == params$tema)
+autores <- x$autores %>%
   filter(tema == params$tema)
 ```
 
@@ -47,15 +51,44 @@ olb::gera_relatorio(ini = "2019-02-01", end = "2019-03-01", tema = "Defesa e Seg
 O resultado é exatamente este *website*, que pode ser customizado para adequar texto e seções. Para escolher o tema de um relatório, basta modificar o argumento da função `gera_relatorio`, passando a ele o nome do tema desejado (i.g., `tema = "Educação"`). Uma lista com todos os temas disponibilizados pela Câmara segue abaixo:
 
 
-Essa lista de temas também pode ser consultado por meio de uma função do pacote:
+Essa lista de temas também pode ser consultada por meio de uma função do pacote, `lista_temas`:
 
 ```{r}
-
+lista_temas()
 ```
 
+#### Outras funcionalidades
 
+Além dessas funcionalidades, o [olb](https://github.com/meirelesff) inclui separadamente ferramentas para extrair e limpar dados sobre as proposições legislativas e seus autores. 
 
-Daqui até o fim do documento, segue um exemplo de seções que são geradas automaticamente.
+```{r, eval=FALSE}
+# Extrai e limpa os dados de todas as proposicoes introduzidas num dado ano
+pega_props(2019)
+
+# Extrai os temas de todas as proposicoes introduzidas num dado ano
+pega_tema(2010)
+
+# Extrai os autores de todas as proposicoes introduzidas num dado ano
+pega_autor(2015)
+
+# Extrai e limpa os dados das proposicoes e seus temas em um dado periodo
+proposicoes(ini = "2019-01-01", end = "2019-02-01")
+```
+
+#### TODO
+
+Como próximos passos, o [olb](https://github.com/meirelesff) poderá ter:
+
+- Funções para extrair e limpar os dados necessários para produzir os rankings (discursos, votações nominais, emendas e relatorias);
+- Modelos treinados, talvez [random forests](https://towardsdatascience.com/the-random-forest-algorithm-d457d499ffcd) com [XGboost](https://xgboost.readthedocs.io/en/latest/), para classificar proposições e outros textos de acordo com os critérios de cada organização (é possível pensar em outras soluções);
+- Novos templates de relatório, inclusive em outros formatos (PDF, .docx, etc.);
+- E, idealmente, uma função com o algoritmo pra produzir os rankings, que trabalharia integrada às funções de extração e de classificação pra automatizar todo o processo.
+
+Daqui até o fim do documento, seguem alguns exemplos de seções que são geradas automaticamente nesse modelo inicial de relatório.
+
+<br>
+<br>
+
 
 # Proposições
 
@@ -82,6 +115,46 @@ highchart() %>%
 ```
 
 
+Quanto à filiação partidária, `r autores %>% unique %>% length` legendas diferentes tivereram proposições submetidas pelos seus(as) deputados(as) no período.
+<br>
+<br>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+autores %>%
+  group_by(partido) %>%
+  summarise(n = n()) %>%
+  mutate(partido = ifelse(is.na(partido), "Orgãos / Outros", partido)) %>%
+  hchart("treemap", hcaes(x = partido, value = n, color = n)) %>%
+  hc_title(text = "Proposições introduzidas por partido") %>%
+  hc_subtitle(text = paste0("Tema: ", params$tema)) %>%
+  hc_credits(enabled = TRUE, # add credits
+             text = "www.olb.org.br",
+             href = "http://olb.org.br/")
+```
+
+<br>
+<br>
+
+
+# Tramitação
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+autores %>%
+  group_by(partido) %>%
+  summarise(n = n()) %>%
+  mutate(partido = ifelse(is.na(partido), "Orgãos / Outros", partido)) %>%
+  hchart("treemap", hcaes(x = partido, value = n, color = n)) %>%
+  hc_title(text = "Local onde as proposições estão tramitando") %>%
+  hc_subtitle(text = paste0("Tema: ", params$tema)) %>%
+  hc_credits(enabled = TRUE, # add credits
+             text = "www.olb.org.br",
+             href = "http://olb.org.br/")
+```
+
+<br>
+<br>
+
+
 # Detalhes das proposições {.tabset}
 
 Nas abas abaixo, é possível consultar informações específicas das proposições por tipo (Projeto de Lei, Medida Provisória, etc).
@@ -96,14 +169,16 @@ Nas abas abaixo, é possível consultar informações específicas das proposiç
 props %>%
   filter(siglaTipo == "PL") %>%
   mutate(prop = paste0("PL ", numero, "/", ano)) %>%
+  mutate(prop = paste0('<a href="', urlInteiroTeor, '" target="_blank">', prop,'</a>')) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
-  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
-  select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  mutate(ementa = substr(ementa, 1, 120) %>% paste0("...")) %>%
+  mutate(autor = gsub("(NA/NA)", "", autor)) %>%
+  select(prop, autor, data, ementa) %>%
+  setNames(c("Proposição", "Autor(a)", "Data de apresentação", "Ementa")) %>%
   datatable(rownames = F, escape = FALSE,
             extensions = 'Buttons',
             options = list(
-  pageLength = 3,
+  pageLength = 5,
   lengthMenu = c(5, 10, 15, 20),
   dom = 'Bfrtip',
   language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
@@ -119,14 +194,16 @@ props %>%
 props %>%
   filter(siglaTipo == "PEC") %>%
   mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
+  mutate(prop = paste0('<a href="', urlInteiroTeor, '" target="_blank">', prop,'</a>')) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
-  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
-  select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  mutate(ementa = substr(ementa, 1, 120) %>% paste0("...")) %>%
+  mutate(autor = gsub("(NA/NA)", "", autor)) %>%
+  select(prop, autor, data, ementa) %>%
+  setNames(c("Proposição", "Autor(a)", "Data de apresentação", "Ementa")) %>%
   datatable(rownames = F, escape = FALSE,
             extensions = 'Buttons',
             options = list(
-  pageLength = 3,
+  pageLength = 5,
   lengthMenu = c(5, 10, 15, 20),
   dom = 'Bfrtip',
   language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
@@ -142,14 +219,16 @@ props %>%
 props %>%
   filter(siglaTipo == "PLP") %>%
   mutate(prop = paste0("PLP ", numero, "/", ano)) %>%
+  mutate(prop = paste0('<a href="', urlInteiroTeor, '" target="_blank">', prop,'</a>')) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
-  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
-  select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  mutate(ementa = substr(ementa, 1, 120) %>% paste0("...")) %>%
+  mutate(autor = gsub("(NA/NA)", "", autor)) %>%
+  select(prop, autor, data, ementa) %>%
+  setNames(c("Proposição", "Autor(a)", "Data de apresentação", "Ementa")) %>%
   datatable(rownames = F, escape = FALSE,
             extensions = 'Buttons',
             options = list(
-  pageLength = 3,
+  pageLength = 5,
   lengthMenu = c(5, 10, 15, 20),
   dom = 'Bfrtip',
   language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
@@ -165,14 +244,16 @@ props %>%
 props %>%
   filter(siglaTipo == "PEC") %>%
   mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
+  mutate(prop = paste0('<a href="', urlInteiroTeor, '" target="_blank">', prop,'</a>')) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
-  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
-  select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  mutate(ementa = substr(ementa, 1, 120) %>% paste0("...")) %>%
+  mutate(autor = gsub("(NA/NA)", "", autor)) %>%
+  select(prop, autor, data, ementa) %>%
+  setNames(c("Proposição", "Autor(a)", "Data de apresentação", "Ementa")) %>%
   datatable(rownames = F, escape = FALSE,
             extensions = 'Buttons',
             options = list(
-  pageLength = 3,
+  pageLength = 5,
   lengthMenu = c(5, 10, 15, 20),
   dom = 'Bfrtip',
   language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),

@@ -2,10 +2,13 @@
 
 export("%>%")
 export(gera_relatorio)
+export(lista_temas)
 export(pega_autores)
 export(pega_props)
 export(pega_tema)
 export(proposicoes)
 export(tramitacao)
 importFrom(magrittr,"%>%")
+importFrom(rlang,":=")
 importFrom(rlang,.data)
+importFrom(stats,setNames)
