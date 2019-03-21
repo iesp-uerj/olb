@@ -15,6 +15,7 @@ output:
     smooth_scroll: true
     number_sections: false
     theme: readable
+    highlight: tango
     keep_md: true
     df_print: paged
 ---
@@ -26,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Pacotes
 library(highcharter)
 library(tidyverse)
+library(DT)
 
 # Dados
 props <- proposicoes(params$ini, params$end) %>%
@@ -45,6 +47,12 @@ olb::gera_relatorio(ini = "2019-02-01", end = "2019-03-01", tema = "Defesa e Seg
 O resultado é exatamente este *website*, que pode ser customizado para adequar texto e seções. Para escolher o tema de um relatório, basta modificar o argumento da função `gera_relatorio`, passando a ele o nome do tema desejado (i.g., `tema = "Educação"`). Uma lista com todos os temas disponibilizados pela Câmara segue abaixo:
 
 
+Essa lista de temas também pode ser consultado por meio de uma função do pacote:
+
+```{r}
+
+```
+
 
 
 Daqui até o fim do documento, segue um exemplo de seções que são geradas automaticamente.
@@ -52,6 +60,8 @@ Daqui até o fim do documento, segue um exemplo de seções que são geradas aut
 # Proposições
 
 No período entre `r format(as.Date(params$ini), "%d/%m/%Y")` e `r format(as.Date(params$end), "%d/%m/%Y")`, `r nrow(props)` proposições legislativas na área de `r params$tema` foram introduzidas. No gráfico abaixo, é possível visualizar o número de proposições introduzidas por data.
+<br>
+<br>
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 x <- props %>%
@@ -75,7 +85,8 @@ highchart() %>%
 # Detalhes das proposições {.tabset}
 
 Nas abas abaixo, é possível consultar informações específicas das proposições por tipo (Projeto de Lei, Medida Provisória, etc).
-
+<br>
+<br>
 
 
 ## Projetos de Lei
@@ -86,8 +97,18 @@ props %>%
   filter(siglaTipo == "PL") %>%
   mutate(prop = paste0("PL ", numero, "/", ano)) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
   select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  datatable(rownames = F, escape = FALSE,
+            extensions = 'Buttons',
+            options = list(
+  pageLength = 3,
+  lengthMenu = c(5, 10, 15, 20),
+  dom = 'Bfrtip',
+  language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
+  buttons = c('excel', 'pdf')
+))
 ```
 
 
@@ -99,8 +120,18 @@ props %>%
   filter(siglaTipo == "PEC") %>%
   mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
   select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  datatable(rownames = F, escape = FALSE,
+            extensions = 'Buttons',
+            options = list(
+  pageLength = 3,
+  lengthMenu = c(5, 10, 15, 20),
+  dom = 'Bfrtip',
+  language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
+  buttons = c('excel', 'pdf')
+))
 ```
 
 
@@ -112,8 +143,18 @@ props %>%
   filter(siglaTipo == "PLP") %>%
   mutate(prop = paste0("PLP ", numero, "/", ano)) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
   select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  datatable(rownames = F, escape = FALSE,
+            extensions = 'Buttons',
+            options = list(
+  pageLength = 3,
+  lengthMenu = c(5, 10, 15, 20),
+  dom = 'Bfrtip',
+  language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
+  buttons = c('excel', 'pdf')
+))
 ```
 
 
@@ -125,8 +166,18 @@ props %>%
   filter(siglaTipo == "PEC") %>%
   mutate(prop = paste0("PEC ", numero, "/", ano)) %>%
   mutate(data = format(as.Date(dataApresentacao), "%d/%m/%Y")) %>%
+  mutate(urlInteiroTeor = paste0('<a href="', urlInteiroTeor, '" target="_blank">Link</a>')) %>%
   select(prop, data, ementa, urlInteiroTeor) %>%
-  setNames(c("Proposição", "Data de apresentação", "Ementa", "URL"))
+  setNames(c("Proposição", "Data de apresentação", "Ementa", "Inteiro teor")) %>%
+  datatable(rownames = F, escape = FALSE,
+            extensions = 'Buttons',
+            options = list(
+  pageLength = 3,
+  lengthMenu = c(5, 10, 15, 20),
+  dom = 'Bfrtip',
+  language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
+  buttons = c('excel', 'pdf')
+))
 ```
 
 
