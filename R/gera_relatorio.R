@@ -6,16 +6,16 @@
 #' @param ini Starting date in the YYYY-MM-DD format (\code{character}).
 #' @param end Ending date in the YYYY-MM-DD format (\code{character}).
 #' @param titulo Title of the report.
-#' @param autor Author of the report (defaults to OLB).
+#' @param autor Author of the report (defaults to 'OLB').
+#' @param tema Theme of the report (defaults to 'Economia').
 #' @param out_dir Output directory to store the report.
 #'
 #' @return A report and its corresponding .Rmd file.
 #'
 #' @export
 
-gera_relatorio <- function(ini, end, titulo = "Relatório de Acompanhamento",
-                           autor = "Observatório do Legislativo Brasileiro", out_dir = getwd(),
-                           tema = "Economia") {
+gera_relatorio <- function(ini, end, titulo = "Relatorio de Acompanhamento",
+                           autor = "OLB", tema = "Economia", out_dir = getwd()) {
 
   rmarkdown::render(
     system.file("reports", "report_html.Rmd", package = "olb"),

@@ -4,9 +4,8 @@
 \alias{gera_relatorio}
 \title{Produce a report of legislative activity in a given period}
 \usage{
-gera_relatorio(ini, end, titulo = "Relatório de Acompanhamento",
-  autor = "Observatório do Legislativo Brasileiro", out_dir = getwd(),
-  tema = "Economia")
+gera_relatorio(ini, end, titulo = "Relatorio de Acompanhamento",
+  autor = "OLB", tema = "Economia", out_dir = getwd())
 }
 \arguments{
 \item{ini}{Starting date in the YYYY-MM-DD format (\code{character}).}
@@ -15,7 +14,9 @@ gera_relatorio(ini, end, titulo = "Relatório de Acompanhamento",
 
 \item{titulo}{Title of the report.}
 
-\item{autor}{Author of the report (defaults to OLB).}
+\item{autor}{Author of the report (defaults to 'OLB').}
+
+\item{tema}{Theme of the report (defaults to 'Economia').}
 
 \item{out_dir}{Output directory to store the report.}
 }
