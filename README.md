@@ -1,10 +1,14 @@
-# olb
 
-[![Travis build status](https://travis-ci.org/meirelesff/olb.svg?branch=master)](https://travis-ci.org/meirelesff/olb)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+olb
+===
 
-`olb` provides several functions to extract, parse, and analyze legislative activity data regarding bills introduced in the [Brazilian Chamber of Deputies](https://www.camara.leg.br/).
+[![Travis build status](https://travis-ci.org/meirelesff/olb.svg?branch=master)](https://travis-ci.org/meirelesff/olb) [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-## Install
+`olb` provides several functions to extract, parse, and analyze legislative activity in the [Brazilian Chamber of Deputies](https://www.camara.leg.br/).
+
+Install
+-------
 
 To install the current version of the `olb`, use:
 

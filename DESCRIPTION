@@ -1,10 +1,10 @@
 Package: olb
 Type: Package
 Title: Functions to Track Legislative Activity in Brazil
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: person("Fernando", "Meireles", , "fernando.meireles@iesp.uerj.br", c("aut", "cre"))
 Description: The olb package provides functions to download and parse legislative data directly
-    from the Brazilian Chamber of Deputies's website. In addition, it contains functions to analyze and report
+    from the Brazilian Chamber of Deputies's API. It also contains functions to analyze and report
     legislative activity.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -12,16 +12,13 @@ LazyData: true
 Depends:
     R (>= 2.10)
 Imports: 
-    readr,
-    magrittr,
     httr,
     dplyr,
     purrr,
-    utils,
     rmarkdown,
     rlang,
-    lubridate,
-    stats
+    jsonlite,
+    magrittr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests: 

@@ -38,54 +38,6 @@ autores <- x$autores %>%
   filter(tema == params$tema)
 ```
 
-# Apresentação
-
-Este é um relatório de acompanhamento de novas proposições (especificamente, PL, PLP, PEC e MPV). Ele exibe de forma simples, com tabelas e visualizações interativas, projetos apresentados em um dado período sobre determinado tema na Câmara dos Deputados -- usando a classificação temática do [Centro de Documentação e Informação da Câmara](https://www2.camara.leg.br/a-camara/estruturaadm/diretorias/diretoria-legislativa/estrutura-1/cedi). 
-
-Todos os dados são extraídos diretamente do [Portal de Dados Abertos da Câmara](https://dadosabertos.camara.leg.br/). Para fazer esse trabalho, o pacote [olb](https://github.com/meirelesff) extrai os dados necessários, limpa e consolida as informações para, então, produzir automaticamente um documento final. 
-
-Basta uma linha de código e poucos segundos para gerar um novo relatório. Exemplo:
-
-```{r, eval=FALSE}
-olb::gera_relatorio(ini = "2019-02-01", end = "2019-03-01", tema = "Defesa e Segurança")
-```
-
-O resultado é exatamente este *website*, que pode ser customizado para adequar texto e seções. Para escolher o tema de um relatório, basta modificar o argumento da função `gera_relatorio`, passando a ele o nome do tema desejado (i.g., `tema = "Educação"`). Uma lista com todos os temas disponibilizados pela Câmara pode ser consultada por meio de uma função do pacote, `lista_temas`:
-
-```{r}
-lista_temas()
-```
-
-#### Outras funcionalidades
-
-Além dessas funcionalidades, o [olb](https://github.com/meirelesff) inclui separadamente ferramentas para extrair e limpar dados sobre as proposições legislativas e seus autores. 
-
-```{r, eval=FALSE}
-# Extrai e limpa os dados de todas as proposicoes introduzidas num dado ano
-pega_props(2019)
-
-# Extrai os temas de todas as proposicoes introduzidas num dado ano
-pega_tema(2010)
-
-# Extrai os autores de todas as proposicoes introduzidas num dado ano
-pega_autor(2015)
-
-# Extrai e limpa os dados das proposicoes e seus temas em um dado periodo
-proposicoes(ini = "2019-01-01", end = "2019-02-01")
-```
-
-#### TODO
-
-Como próximos passos, o [olb](https://github.com/meirelesff) poderá ter:
-
-- Funções para extrair e limpar os dados necessários para produzir os rankings (discursos, votações nominais, emendas e relatorias);
-- Modelos treinados, talvez [random forests](https://towardsdatascience.com/the-random-forest-algorithm-d457d499ffcd) com [XGboost](https://xgboost.readthedocs.io/en/latest/), para classificar proposições e outros textos de acordo com os critérios de cada organização (é possível pensar em outras soluções);
-- Novos templates de relatório, inclusive em outros formatos (PDF, .docx, etc.);
-- E, idealmente, uma função com o algoritmo pra produzir os rankings, que trabalharia integrada às funções de extração e de classificação pra automatizar todo o processo.
-
-Daqui até o fim do documento, seguem alguns exemplos de seções que são geradas automaticamente nesse modelo inicial de relatório.
-<br>
-<br>
 
 # Proposições
 

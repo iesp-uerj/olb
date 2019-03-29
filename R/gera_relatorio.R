@@ -12,8 +12,8 @@
 #'
 #' @return A report and its corresponding .Rmd file.
 #'
-#' @export
 
+# Nao exportada
 gera_relatorio <- function(ini, end, titulo = "Relatorio de Acompanhamento",
                            autor = "OLB", tema = "Economia", out_dir = getwd()) {
 
