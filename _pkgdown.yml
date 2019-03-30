@@ -1,0 +1,30 @@
+title: olb R package
+template:
+  params:
+    bootswatch: yeti
+
+authors:
+  Fernando Meireles:
+    href: https://fmeireles.com/
+  OLB:
+    href: http://olb.org.br/
+
+reference:
+  - title: Deputies
+    contents:
+    - contains("deputy")
+    - contains("deputies")
+
+  - title: Bills
+    contents:
+    - contains("proposal")
+    - contains("proposals")
+
+  - title: Speech
+    contents:
+    - contains("speech")
+
+  - title: Other
+    contents:
+    - gera_relatorio
+    - list_topics
