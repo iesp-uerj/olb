@@ -1,7 +1,7 @@
 #' Collect data to produce legislative reports by topic
 #'
 #' @description
-#' \code{proposals_track_report()} gathers a dataset with all the information required to produce
+#' \code{get_track_report_data()} gathers a dataset with all the information required to produce
 #' OLB's legislative reports by topic.
 #'
 #' @param dataInicio Start date (in YYYY-MM-DD format, as \code{character}).
@@ -12,7 +12,7 @@
 #'
 #' @export
 
-proposals_track_report <- function(dataInicio, dataFim, codTema){
+get_track_report_data <- function(dataInicio, dataFim, codTema){
 
   get_proposals_olb(dataInicio = dataInicio, dataFim = dataFim, codTema = codTema) %>%
     dplyr::mutate(detalhes = purrr::map(.$id, get_proposal)) %>%

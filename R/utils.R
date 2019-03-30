@@ -1,3 +1,16 @@
+#' Pipe operator
+#'
+#' See \code{magrittr::\link[magrittr]{\%>\%}} for details.
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
+NULL
+
+
 # Function to parse Chamber's json
 json_camara <- function(pag, data_frame = FALSE){
 
@@ -51,3 +64,7 @@ get_data <- function(api, query = NULL, single_page = TRUE, data_frame = FALSE){
   # Return
   return(dados)
 }
+
+
+# Avoid the R CMD check note about magrittr's dot
+utils::globalVariables(".")

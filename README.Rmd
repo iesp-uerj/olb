@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 [![Travis build status](https://travis-ci.org/meirelesff/olb.svg?branch=master)](https://travis-ci.org/meirelesff/olb)
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-`olb` é um pacote em `R` usado para conectar-se à nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da [Câmara dos Deputados](https://www.camara.leg.br/). Entre outros, o pacote contém funções para extrair e limpar quaisquer tipos de informações sobre proposições legislativas, atuação dos parlamentares, discursos e votações nominais. Usando o sistema de IDs e eventos do serviço de dados da Câmara, além disso, o `olb` é capaz de organizar milhares de informações -- emendas, requerimentos, relatorias, situações de proposições -- em bancos de dados apropriados para análise em segundos.
+`olb` é um pacote em `R` usado para conectar-se à nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da [Câmara dos Deputados](https://www.camara.leg.br/). Entre outros, o pacote contém funções para extrair e limpar quaisquer tipos de informações sobre proposições legislativas, atuação dos parlamentares, discursos e votações nominais. Usando o sistema de IDs e eventos do serviço de dados da Câmara, além disso, o `olb` organiza em segundos milhares de informações -- emendas, requerimentos, relatorias, situações de proposições -- em bancos de dados apropriados para análise e para a produção automatizada de relatórios e indicadores.
 
 
 ## Instalação

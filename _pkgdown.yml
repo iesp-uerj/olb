@@ -24,7 +24,7 @@ reference:
     contents:
     - contains("speech")
 
-  - title: Other
+  - title: Utility
     contents:
-    - gera_relatorio
+    - get_track_report_data
     - list_topics

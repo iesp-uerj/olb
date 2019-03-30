@@ -11,59 +11,64 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
+  cache = TRUE,
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-Essencialmente, o que o `olb` faz é retornar em formato apropriado (i.e., [tidy](https://en.wikipedia.org/wiki/Tidy_data), para ser preciso) dados sobre a atividade legislativa na Câmara dos Deputados, todos diretamente extraído da nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da instituição. Entre outros, esses dados incluem informações biográficas e filiação partidária dos deputados titulares desde 1946; detalhes sobre autoria e tramitação de qualquer proposição introduzida na, ou que passou pela, Câmara; encaminhamentos, resultados e votos nominais dados pelos deputados em plenário; atividade e pauta das comissões; entre inúmeras outras. Adicionalmente, o pacote `olb` também oferece um conjunto de funções para organizar todo esse conjunto de informações para facilitar análises posteriores.
+Em sua essência, o `olb` extrai dados sobre a atividade legislativa na Câmara dos Deputados diretamente da nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da instituição. Entre outros, esses dados incluem informações biográficas e filiação partidária dos deputados titulares desde 1946; detalhes sobre autoria e tramitação de qualquer proposição que já passou pela Câmara; encaminhamentos, resultados e votos nominais dados pelos deputados em plenário; atividade e pauta das comissões; entre inúmeras outras. Adicionalmente, o pacote `olb` oferece um conjunto de funções para organizar todo esse conjunto de informações para facilitar análises posteriores e a produção de relatórios e indicadores.
 Alguns exemplos disso são:
 
-- Classificação de proposições por temas (organizados pelo setor de documentação da casa);
+- Classificação de proposições por temas;
 - Identificação da atividade legislativa por partido, estado ou qualquer outra variável;
 - Mapeamento da introdução de proposições por período e por órgão.
 
-No restante deste tutorial, apresento exemplos práticos de como usar o `olb` para obter esses e outros tipos de dados legislativos.
+No restante deste tutorial, seguem exemplos práticos de como usar o `olb`.
 
+# Instalação
 
-## Intalação
+Para instalar o `olb` no `R`, basta rodar (usando o pacote `devtools`):
 
-Antes de começar, é necessário intalarmos o `olb`. Em sua versão corrente
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r,eval=FALSE}
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("iesp-uerj/olb")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+Feito isso, carregamos o `olb` em uma sessão corrente do `R` com:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r,eval=FALSE}
+library(olb)
 ```
 
-Also a quote using `>`:
+# Organização do pacote
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+O `olb` contém funções específicas para obter cada tipo de dado legislativo. Para extrair proposições introduzidas ou que passaram pela Câmara, é possível usar funções como `get_proposal()` ou `get_proposal_list()`. Outro exemplo, `get_deputy_bio()` é usada para extrair dados biográficos de um determinado deputado ou deputada. De forma geral, o nome das funções segue a seguinte regra:
+
+- Funções iniciadas por `get_` extraem e organizam dados legislativos;
+- Funções iniciadas por `list_` retornam listas com informações relevantes, como o significado das siglas utilizadas para cada tipo de proposição;
+- Funções iniciadas por `create_` produzem *outputs* estruturados, como *websites* e relatórios automatizados, a partir de dados extraídos pelas outras funções.
+
+# Dados disponíveis
+
+## Deputados
+
+### Composição de uma legislatura
+
+
+### Lista de deputados por estado, partido e outros
+
+
+### Dados biográficos detalhados
+
+
+
+## Proposições
+
+
+## Discursos
+
+
+# Exemplos de uso
+
+
