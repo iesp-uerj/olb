@@ -1,5 +1,5 @@
 ---
-title: "Usando o olb"
+title: "Usando o olb: Um tutorial básico"
 author: "Observatório do Legislativo Brasileiro (OLB)"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,15 +16,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+Essencialmente, o que o `olb` faz é retornar em formato apropriado (i.e., [tidy](https://en.wikipedia.org/wiki/Tidy_data), para ser preciso) dados sobre a atividade legislativa na Câmara dos Deputados, todos diretamente extraído da nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da instituição. Entre outros, esses dados incluem informações biográficas e filiação partidária dos deputados titulares desde 1946; detalhes sobre autoria e tramitação de qualquer proposição introduzida na, ou que passou pela, Câmara; encaminhamentos, resultados e votos nominais dados pelos deputados em plenário; atividade e pauta das comissões; entre inúmeras outras. Adicionalmente, o pacote `olb` também oferece um conjunto de funções para organizar todo esse conjunto de informações para facilitar análises posteriores.
+Alguns exemplos disso são:
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+- Classificação de proposições por temas (organizados pelo setor de documentação da casa);
+- Identificação da atividade legislativa por partido, estado ou qualquer outra variável;
+- Mapeamento da introdução de proposições por período e por órgão.
 
-## Vignette Info
+No restante deste tutorial, apresento exemplos práticos de como usar o `olb` para obter esses e outros tipos de dados legislativos.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+## Intalação
+
+Antes de começar, é necessário intalarmos o `olb`. Em sua versão corrente
 
 ## Styles
 
