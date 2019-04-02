@@ -2,7 +2,9 @@
 title: "Usando o olb: Um tutorial básico"
 author: "Observatório do Legislativo Brasileiro (OLB)"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    df_print: kable
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,8 +15,13 @@ vignette: >
 knitr::opts_chunk$set(
   cache = TRUE,
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warning = FALSE,
+  error = FALSE,
+  eval = FALSE
 )
+
+library(olb)
 ```
 
 Em sua essência, o `olb` extrai dados sobre a atividade legislativa na Câmara dos Deputados diretamente da nova [API de Dados Abertos](https://dadosabertos.camara.leg.br/) da instituição. Entre outros, esses dados incluem informações biográficas e filiação partidária dos deputados titulares desde 1946; detalhes sobre autoria e tramitação de qualquer proposição que já passou pela Câmara; encaminhamentos, resultados e votos nominais dados pelos deputados em plenário; atividade e pauta das comissões; entre inúmeras outras. Adicionalmente, o pacote `olb` oferece um conjunto de funções para organizar todo esse conjunto de informações para facilitar análises posteriores e a produção de relatórios e indicadores.
@@ -51,24 +58,74 @@ O `olb` contém funções específicas para obter cada tipo de dado legislativo.
 
 # Dados disponíveis
 
+É possível coletar as informações mais relevantes do processo legislativo na Câmara dos Deputados com o `olb`. Por exemplo, podemos saber quantas proposições foram introduzidas em um dado período; quais foram os parlamentares que mais emendaram projetos, quais propuseram iniciativas em determinada área; quais comissões aprovaram mais projetos de lei, ou quais delas são mais produtivas; entre várias outras coisas. A seguir, são apresentadas, por tema, as funções do `olb` por obter cada um desses tipos de informação.
+
 ## Deputados
 
-### Composição de uma legislatura
+Para obter uma lista atualizada com todos os deputados e deputadas titulares na Câmara, basta usar a função `get_deputies_list()`:
 
+```{r message=FALSE, warning=FALSE}
+deputados <- get_deputies_list()
+head(deputados)
+```
 
-### Lista de deputados por estado, partido e outros
+O resultado é um `data.frame` com informações gerais sobre os incumbentes na Câmara. Para além disso, é posível customizar a chamada à função para obter outros dados. Para obter uma lista com os titulares na Legislatura 55, basta passar `55`, como `numeric` ou `character`, ao argumento `idLegislatura`:
+
+```{r message=FALSE, warning=FALSE}
+deputados55 <- get_deputies_list(idLegislatura = 55)
+head(deputados55)
+```
+
+Também é possível fazer consultas por UF (`siglaUf`), partido (`siglaPartido`), sexo (`siglaSexo`) e data específica (`dataInicio` e `dataFim`). Paticularmente, todas essas opções são úteis por permitirem obtermos os IDs que a Câmara dos Deputados atribui a cada parlamentar que já passou pela casa.
 
 
 ### Dados biográficos detalhados
 
+Como dito, cada deputado ou deputada tem um ID único, atribuído pelo setor de documentação da Câmara, que serve para identificar todas as suas atividades legislativas. O político baiano Juhaty Júnior, por exemplo, tem o ID `74570`. Com essa informação, podemos obter seus dados biográficos detalhados com `get_deputy_bio()`:
 
+```{r message=FALSE, warning=FALSE}
+get_deputy_bio(74570)
+```
 
 ## Proposições
 
+Para obter uma lista de proposições que foram objeto de atividade nos últimos 30 dias na Câmara, use `get_proposal_list()`:
 
-## Discursos
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+proposicoes <- get_proposal_list()
+```
+
+Usando os diversos argumentos da função (para ver cada um deles detalhadamente, consulte a [documentação da API da Câmara](https://dadosabertos.camara.leg.br/swagger/api.html)), é possível filtrar as proposições por tema (a lista de temas e códigos é obtida com `list_topics()`):
 
 
-# Exemplos de uso
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+proposicoes <- get_proposal_list(codTema = "44")
+```
 
+Por ano:
 
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+proposicoes <- get_proposal_list(ano = 2010)
+```
+
+Por deputado:
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+proposicoes <- get_proposal_list(idDeputadoAutor = 74570)
+```
+
+Por data de introdução:
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+proposicoes <- get_proposal_list(dataApresentacaoInicio = "2018-05-30", dataApresentacaoFim = "2018-06-30")
+```
+
+Entre outros.Tendo o ID da proposição (assim como os IDs dos parlamentares, cada proposição ganha um indicador único), extraímos facilmente sua ementa e outros detalhes com `get_proposal()`:
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+get_proposal(14490)
+```
+
+## Continuação
+
+Essa é uma versão inicial da documentação do pacote. No futuro, teremos exemplos aplicados de como usá-lo para produzir relatórios, indicadores e outros.

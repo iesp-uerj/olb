@@ -67,7 +67,7 @@
       <h1>Usando o olb: Um tutorial básico</h1>
                         <h4 class="author">Observatório do Legislativo Brasileiro (OLB)</h4>
             
-            <h4 class="date">2019-03-30</h4>
+            <h4 class="date">2019-04-02</h4>
       
       
       <div class="hidden name"><code>olb.Rmd</code></div>
@@ -87,15 +87,15 @@
 <h1 class="hasAnchor">
 <a href="#instalacao" class="anchor"></a>Instalação</h1>
 <p>Para instalar o <code>olb</code> no <code>R</code>, basta rodar (usando o pacote <code>devtools</code>):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(devtools)) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"iesp-uerj/olb"</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">require</a></span>(devtools)) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"devtools"</span>)
+devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"iesp-uerj/olb"</span>)</code></pre></div>
 <p>Feito isso, carregamos o <code>olb</code> em uma sessão corrente do <code>R</code> com:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(olb)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(olb)</code></pre></div>
 </div>
 <div id="organizacao-do-pacote" class="section level1">
 <h1 class="hasAnchor">
 <a href="#organizacao-do-pacote" class="anchor"></a>Organização do pacote</h1>
-<p>O <code>olb</code> contém funções específicas para obter cada tipo de dado legislativo. Para extrair proposições introduzidas ou que passaram pela Câmara, é possível usar funções como <code><a href="https://www.rdocumentation.org/packages/olb/topics/get_proposal">get_proposal()</a></code> ou <code><a href="https://www.rdocumentation.org/packages/olb/topics/get_proposal_list">get_proposal_list()</a></code>. Outro exemplo, <code><a href="https://www.rdocumentation.org/packages/olb/topics/get_deputy_bio">get_deputy_bio()</a></code> é usada para extrair dados biográficos de um determinado deputado ou deputada. De forma geral, o nome das funções segue a seguinte regra:</p>
+<p>O <code>olb</code> contém funções específicas para obter cada tipo de dado legislativo. Para extrair proposições introduzidas ou que passaram pela Câmara, é possível usar funções como <code><a href="../reference/get_proposal.html">get_proposal()</a></code> ou <code><a href="../reference/get_proposal_list.html">get_proposal_list()</a></code>. Outro exemplo, <code><a href="../reference/get_deputy_bio.html">get_deputy_bio()</a></code> é usada para extrair dados biográficos de um determinado deputado ou deputada. De forma geral, o nome das funções segue a seguinte regra:</p>
 <ul>
 <li>Funções iniciadas por <code>get_</code> extraem e organizam dados legislativos;</li>
 <li>Funções iniciadas por <code>list_</code> retornam listas com informações relevantes, como o significado das siglas utilizadas para cada tipo de proposição;</li>
@@ -105,34 +105,45 @@
 <div id="dados-disponiveis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dados-disponiveis" class="anchor"></a>Dados disponíveis</h1>
+<p>É possível coletar as informações mais relevantes do processo legislativo na Câmara dos Deputados com o <code>olb</code>. Por exemplo, podemos saber quantas proposições foram introduzidas em um dado período; quais foram os parlamentares que mais emendaram projetos, quais propuseram iniciativas em determinada área; quais comissões aprovaram mais projetos de lei, ou quais delas são mais produtivas; entre várias outras coisas. A seguir, são apresentadas, por tema, as funções do <code>olb</code> por obter cada um desses tipos de informação.</p>
 <div id="deputados" class="section level2">
 <h2 class="hasAnchor">
 <a href="#deputados" class="anchor"></a>Deputados</h2>
-<div id="composicao-de-uma-legislatura" class="section level3">
-<h3 class="hasAnchor">
-<a href="#composicao-de-uma-legislatura" class="anchor"></a>Composição de uma legislatura</h3>
-</div>
-<div id="lista-de-deputados-por-estado-partido-e-outros" class="section level3">
-<h3 class="hasAnchor">
-<a href="#lista-de-deputados-por-estado-partido-e-outros" class="anchor"></a>Lista de deputados por estado, partido e outros</h3>
-</div>
+<p>Para obter uma lista atualizada com todos os deputados e deputadas titulares na Câmara, basta usar a função <code><a href="../reference/get_deputies_list.html">get_deputies_list()</a></code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">deputados &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_deputies_list.html">get_deputies_list</a></span>()
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(deputados)</code></pre></div>
+<p>O resultado é um <code>data.frame</code> com informações gerais sobre os incumbentes na Câmara. Para além disso, é posível customizar a chamada à função para obter outros dados. Para obter uma lista com os titulares na Legislatura 55, basta passar <code>55</code>, como <code>numeric</code> ou <code>character</code>, ao argumento <code>idLegislatura</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">deputados55 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_deputies_list.html">get_deputies_list</a></span>(<span class="dt">idLegislatura =</span> <span class="dv">55</span>)
+<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(deputados55)</code></pre></div>
+<p>Também é possível fazer consultas por UF (<code>siglaUf</code>), partido (<code>siglaPartido</code>), sexo (<code>siglaSexo</code>) e data específica (<code>dataInicio</code> e <code>dataFim</code>). Paticularmente, todas essas opções são úteis por permitirem obtermos os IDs que a Câmara dos Deputados atribui a cada parlamentar que já passou pela casa.</p>
 <div id="dados-biograficos-detalhados" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dados-biograficos-detalhados" class="anchor"></a>Dados biográficos detalhados</h3>
+<p>Como dito, cada deputado ou deputada tem um ID único, atribuído pelo setor de documentação da Câmara, que serve para identificar todas as suas atividades legislativas. O político baiano Juhaty Júnior, por exemplo, tem o ID <code>74570</code>. Com essa informação, podemos obter seus dados biográficos detalhados com <code><a href="../reference/get_deputy_bio.html">get_deputy_bio()</a></code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/get_deputy_bio.html">get_deputy_bio</a></span>(<span class="dv">74570</span>)</code></pre></div>
 </div>
 </div>
 <div id="proposicoes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#proposicoes" class="anchor"></a>Proposições</h2>
+<p>Para obter uma lista de proposições que foram objeto de atividade nos últimos 30 dias na Câmara, use <code><a href="../reference/get_proposal_list.html">get_proposal_list()</a></code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proposicoes &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_proposal_list.html">get_proposal_list</a></span>()</code></pre></div>
+<p>Usando os diversos argumentos da função (para ver cada um deles detalhadamente, consulte a <a href="https://dadosabertos.camara.leg.br/swagger/api.html">documentação da API da Câmara</a>), é possível filtrar as proposições por tema (a lista de temas e códigos é obtida com <code><a href="../reference/list_topics.html">list_topics()</a></code>):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proposicoes &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_proposal_list.html">get_proposal_list</a></span>(<span class="dt">codTema =</span> <span class="st">"44"</span>)</code></pre></div>
+<p>Por ano:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proposicoes &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_proposal_list.html">get_proposal_list</a></span>(<span class="dt">ano =</span> <span class="dv">2010</span>)</code></pre></div>
+<p>Por deputado:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proposicoes &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_proposal_list.html">get_proposal_list</a></span>(<span class="dt">idDeputadoAutor =</span> <span class="dv">74570</span>)</code></pre></div>
+<p>Por data de introdução:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proposicoes &lt;-<span class="st"> </span><span class="kw"><a href="../reference/get_proposal_list.html">get_proposal_list</a></span>(<span class="dt">dataApresentacaoInicio =</span> <span class="st">"2018-05-30"</span>, <span class="dt">dataApresentacaoFim =</span> <span class="st">"2018-06-30"</span>)</code></pre></div>
+<p>Entre outros.Tendo o ID da proposição (assim como os IDs dos parlamentares, cada proposição ganha um indicador único), extraímos facilmente sua ementa e outros detalhes com <code><a href="../reference/get_proposal.html">get_proposal()</a></code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/get_proposal.html">get_proposal</a></span>(<span class="dv">14490</span>)</code></pre></div>
 </div>
-<div id="discursos" class="section level2">
+<div id="continuacao" class="section level2">
 <h2 class="hasAnchor">
-<a href="#discursos" class="anchor"></a>Discursos</h2>
+<a href="#continuacao" class="anchor"></a>Continuação</h2>
+<p>Essa é uma versão inicial da documentação do pacote. No futuro, teremos exemplos aplicados de como usá-lo para produzir relatórios, indicadores e outros.</p>
 </div>
-</div>
-<div id="exemplos-de-uso" class="section level1">
-<h1 class="hasAnchor">
-<a href="#exemplos-de-uso" class="anchor"></a>Exemplos de uso</h1>
 </div>
   </div>
 
@@ -147,10 +158,9 @@
 <a href="#dados-disponiveis">Dados disponíveis</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#deputados">Deputados</a></li>
       <li><a href="#proposicoes">Proposições</a></li>
-      <li><a href="#discursos">Discursos</a></li>
+      <li><a href="#continuacao">Continuação</a></li>
       </ul>
 </li>
-      <li><a href="#exemplos-de-uso">Exemplos de uso</a></li>
       </ul>
 </div>
       </div>
