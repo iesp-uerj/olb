@@ -63,7 +63,10 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
   relac <- props %>%
     dplyr::mutate(relacionadas = purrr::map(.$id, get_related_proposals)) %>%
     dplyr::mutate(relacionadas = purrr::map_if(.$relacionadas, is_zero, data.frame)) %>%
-    tidyr::unnest(.sep = "_")
+    tidyr::unnest(.sep = "_") %>%
+    dplyr::mutate(data_relacionada = purrr::map(.data$relacionadas_id, get_proposal)) %>%
+    dplyr::mutate(data_relacionada = purrr::map(.data$data_relacionada, ~ .$dataApresentacao) %>% as.character %>% as.Date)
+
 
   # Authors
 
