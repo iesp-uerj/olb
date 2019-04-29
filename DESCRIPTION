@@ -23,11 +23,13 @@ Imports:
     jsonlite,
     magrittr,
     tidyr,
-    lubridate
+    lubridate,
+    RJSONIO
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests: 
     highcharter,
     DT,
-    knitr
+    knitr,
+    flexdashboard
 VignetteBuilder: knitr

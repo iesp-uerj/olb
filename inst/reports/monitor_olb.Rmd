@@ -110,7 +110,7 @@ inverse .dropdown-menu>.active>a, .navbar-inverse .dropdown-menu>.active>a:hover
 
 
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 
 # Pacotes
 library(highcharter)
@@ -129,7 +129,29 @@ educacao <- get_monitor_data(params$ini, params$end, 46)
 defesa_seguranca <- get_monitor_data(params$ini, params$end, 57)
 
 # Internacionalizacao
-source("R/internacionalizacao.R")
+portugues <- RJSONIO::fromJSON('{
+    "sEmptyTable": "Nenhum registro encontrado",
+                   "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                   "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                   "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+                   "sInfoPostFix": "",
+                   "sInfoThousands": ".",
+                   "sLengthMenu": "_MENU_ resultados por página",
+                   "sLoadingRecords": "Carregando...",
+                   "sProcessing": "Processando...",
+                   "sZeroRecords": "Nenhum registro encontrado",
+                   "sSearch": "Pesquisar",
+                   "oPaginate": {
+                   "sNext": "Próximo",
+                   "sPrevious": "Anterior",
+                   "sFirst": "Primeiro",
+                   "sLast": "Último"
+                   },
+                   "oAria": {
+                   "sSortAscending": ": Ordenar colunas de forma ascendente",
+                   "sSortDescending": ": Ordenar colunas de forma descendente"
+                   }
+                   }', encoding = "UTF-8")
 
 # Data
 hoje <- format(today(), "%d/%m/%Y")
@@ -141,6 +163,9 @@ tema_hc <- hc_theme(colors = c("#28a745", "#434348", "#90ed7d"),
     chart = list(backgroundColor = "transparent", style = list(fontFamily = "Rasa", fontSize = "18px")),
     xAxis = list(gridLineWidth = 1)
 )
+
+# Mensagens
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ```
 

@@ -1,13 +1,13 @@
 #' Build the OLB monitor
 #'
 #' @description
-#' \code{gera_relatorio()} summarizes legislative data and outputs a Rmarkdown report.
+#' \code{build_monitor()} summarizes legislative data and outputs a Rmarkdown report.
 #'
 #' @param ini Starting date in the YYYY-MM-DD format (\code{character}).
 #' @param end Ending date in the YYYY-MM-DD format (\code{character}).
-#' @param out_dir Output directory to store the report.
+#' @param out_dir Output directory to store the monitor.
 #'
-#' @return A report and its corresponding .Rmd file.
+#' @return A OLB's Legislative Monitor website.
 #'
 #' @export
 

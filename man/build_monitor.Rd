@@ -11,11 +11,11 @@ build_monitor(ini, end, out_dir = getwd())
 
 \item{end}{Ending date in the YYYY-MM-DD format (\code{character}).}
 
-\item{out_dir}{Output directory to store the report.}
+\item{out_dir}{Output directory to store the monitor.}
 }
 \value{
-A report and its corresponding .Rmd file.
+A OLB's Legislative Monitor website.
 }
 \description{
-\code{gera_relatorio()} summarizes legislative data and outputs a Rmarkdown report.
+\code{build_monitor()} summarizes legislative data and outputs a Rmarkdown report.
 }
