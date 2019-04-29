@@ -1,0 +1,1085 @@
+---
+params:
+  ini: "2019-01-01"
+  end: "2019-02-01"
+title: "Monitor Legislativo"
+output:
+  flexdashboard::flex_dashboard:
+    self_contained: false
+    theme: yeti
+    orientation: columns
+---
+
+<style> 
+@import url('https://fonts.googleapis.com/css?family=Rasa');
+.navbar {
+  background-color:#28a745;
+  border-color:#28a745;
+}
+a {
+  color:#28a745;
+}
+
+a:visited {
+  color:#28a745;
+}
+
+a:hover {
+  color:#28a745;
+}
+a:focus {
+  color:#28a745;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active {
+    border-top-color: #28a745;
+    font-size: 18px;
+}
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus {
+    background-color: #28a745;
+}
+.nav-tabs-custom > .nav-tabs > li > a, .nav-tabs-custom > .nav-tabs > li > a:active {
+    font-size: 16px;
+}
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus {
+    color: #ffffff;
+    background-color: #3DAF57;
+}
+.navbar-inverse .navbar-nav>li>a:hover, .navbar-inverse .navbar-nav>li>a:focus {
+    color: #ffffff;
+    background-color: #3DAF57;
+}
+.navbar {
+    border: none;
+    font-size: 16px;
+}
+body {
+    font-family: Rasa, Georgia,"Times New Roman",Times,serif;
+    font-size: 18px;
+}
+.chart-title {
+    font-size: 18px;
+}
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
+    z-index: 3;
+    color: #ffffff;
+    background-color: #28a745;
+    border-color: #28a745;
+    cursor: default;
+    font-size: 14px;
+}
+table {
+    font-size: 17px;
+}
+inverse .dropdown-menu>.active>a, .navbar-inverse .dropdown-menu>.active>a:hover {
+    background-color: #28a745;
+}
+.navbar-inverse .dropdown-menu>li>a:hover, .navbar-inverse .dropdown-menu>.active>a, .navbar-inverse .dropdown-menu>.active>a:hover {
+    background-color: #3DAF57;
+}
+.navbar .dropdown-menu>li>a, .navbar .dropdown-menu>li>a:focus {
+    background-color: #28a745;
+}
+.navbar .dropdown-menu>li>a, .navbar .dropdown-menu>li>a {
+    background-color: #28a745;
+}
+.navbar-brand {
+    font-size: 21px;
+}
+#texto {
+    padding: 30px 30px 20px 20px;
+}
+#texto-intro {
+    padding: 50px 65px 50px 65px;
+    font-size: 19px;
+    line-height: 150%;
+    text-align: justify;
+}
+#texto-intro-update {
+    font-size: 14px;
+}
+#chart-title-tema {
+    border-bottom: none;
+    color: #666;
+    font-size: 19px;
+    font-weight: 300;
+    padding: 7px 10px 4px;
+}
+
+</style>                    
+
+
+
+```{r setup, include=FALSE}
+
+# Pacotes
+library(highcharter)
+library(lubridate)
+library(tidyverse)
+library(DT)
+
+# Dados
+ciencia_tecnologia <- get_monitor_data(params$ini, params$end, 62)
+economia <- get_monitor_data(params$ini, params$end, 40)
+direitos_humanos <- get_monitor_data(params$ini, params$end, 44)
+meio_ambiente <- get_monitor_data(params$ini, params$end, 48)
+previdencia <- get_monitor_data(params$ini, params$end, 52)
+saude <- get_monitor_data(params$ini, params$end, 56)
+educacao <- get_monitor_data(params$ini, params$end, 46)
+defesa_seguranca <- get_monitor_data(params$ini, params$end, 57)
+
+# Internacionalizacao
+source("R/internacionalizacao.R")
+
+# Data
+hoje <- format(today(), "%d/%m/%Y")
+hora <- paste0(hour(Sys.time()), "h", minute(Sys.time()))
+
+# Tema
+tema_hc <- hc_theme(colors = c("#28a745", "#434348", "#90ed7d"),
+                 
+    chart = list(backgroundColor = "transparent", style = list(fontFamily = "Rasa", fontSize = "18px")),
+    xAxis = list(gridLineWidth = 1)
+)
+
+```
+
+
+
+Início
+===================================== 
+
+Column {data-width=550}
+-----------------------------------------------------------------------
+
+### O Monitor
+
+<div id="texto-intro">
+O **Monitor Legislativo** do [Observatório do Legislativo Brasileiro](http://olb.org.br/) é uma ferramenta de acompanhamento da atividade legislativa na Câmara dos Deputados. Com ele, é possível obter informações resumidas, atualizadas diariamente, sobre as iniciativas que estão tramitando em diversas áreas de interesse público, como [Saúde](#saude) e [Educação](#educacao).
+
+<div id="texto-intro-update">
+*Dados atualizados em: `r paste0(hoje, ", ", hora)`*
+</div>
+</div>
+
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+### Como usar
+
+<div id="texto">
+- Selecione um tema no menu "Temas", acima, para obter informações sobre a tramitação das proposições legislativas que tiveram movimentação nos últimos 30 dias em determinada área de políticas públicas; 
+
+- Passe o *mouse* por cima dos itens nos gráficos para obter informações detalhadas;
+
+- Clique nos *links* para visitar as páginas relacionadas a cada proposição;
+
+- Para obter explicações sobre a metodologia e sobre os dados que utilizamos no monitor, [clique aqui](#dados-e-metodologia). 
+</div>
+
+
+
+
+Ciência, Tecnologia e Inovação {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Ciência, Tecnologia e Inovação</div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+ciencia_tecnologia$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+ciencia_tecnologia$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+ciencia_tecnologia$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues)
+            )
+```
+
+### Emendas
+
+```{r}
+
+ciencia_tecnologia$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues)
+  )
+
+```
+
+
+
+
+
+
+
+
+
+Educação {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Educação</div>
+
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+educacao$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+educacao$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+
+### Tramitação das proposições
+
+```{r}
+educacao$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+educacao$relac %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+
+Economia {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Economia</div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+economia$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+economia$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+economia$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+economia$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+
+Defesa e Segurança {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Defesa e Segurança</div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+defesa_seguranca$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+defesa_seguranca$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+defesa_seguranca$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+defesa_seguranca$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+
+
+Direitos Humanos e Minorias  {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Direitos Humanos e Minorias </div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+direitos_humanos$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+direitos_humanos$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+direitos_humanos$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+direitos_humanos$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+Meio Ambiente e Desenv. Sustentável  {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Meio Ambiente e Desenvolvimento Sustentável </div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+meio_ambiente$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+meio_ambiente$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+meio_ambiente$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+meio_ambiente$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+Previdência e Assistência Social  {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Previdência e Assistência Social </div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+previdencia$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+previdencia$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+previdencia$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = list(url = 'http://cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json')
+            ))
+```
+
+### Emendas
+
+```{r}
+
+previdencia$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+Saúde  {data-navmenu="Temas"}
+=====================================  
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+<div id="chart-title-tema">Tema: Saúde </div>
+
+### Proposições que sofreram alterações de tramitação nos últimos 30 dias
+
+```{r}
+saude$trams %>%
+  group_by(siglaTipo) %>%
+  summarise(n = unique(id) %>% length()) %>%
+  arrange(-n) %>%
+  hchart(type = "column", color = "#28a745", hcaes(y = n, x = siglaTipo, label = siglaTipo)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Tipo de Proposição"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+```
+
+
+### Proposições introduzidas no tema por ano
+
+```{r}
+saude$long %>%
+  count(ano) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hc_yAxis(title = list(enabled = FALSE),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_xAxis(title = list(text = "Ano"),
+           labels = list(style = list(fontSize = "16px"))) %>%
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
+             {point.y:,.0f}<br/>", shared = TRUE) %>%
+  hc_add_theme(tema_hc)
+
+```
+
+
+Column {.tabset data-width=550}
+-----------------------------------------------------------------------
+
+### Tramitação das proposições
+
+```{r}
+saude$trams %>%
+  mutate(dataHora = as.Date(dataHora)) %>%
+  filter(dataHora > as.Date("2019-03-05")) %>%
+  group_by(id) %>%
+  mutate(acoes = n()) %>%
+  arrange(id, -sequencia) %>%
+  slice(1) %>%
+  summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
+            prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
+            acoes = acoes[1],
+            ultima_acao = descricaoTramitacao,
+            local = siglaOrgao, 
+            regime = regime
+  ) %>%
+  arrange(-acoes) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  select(-id) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+```
+
+### Emendas
+
+```{r}
+
+saude$relac %>%
+  mutate(data_relacionada = as.Date(data_relacionada)) %>%
+  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  group_by(id, siglaTipo, numero, ano) %>%
+  summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
+            emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
+  ungroup() %>%
+  mutate(prop = paste0(siglaTipo, " ", numero, "/", ano),
+         prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>')) %>%
+  select(prop, emendas_propostas, emendas_aprovadas) %>%
+  arrange(-emendas_propostas) %>%
+  setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
+  datatable(rownames = F, escape = FALSE,
+            style = 'bootstrap',
+            options = list(
+              pageLength = 10,
+              lengthMenu = c(10, 15, 20),
+              dom = 'tip',
+              language = portugues
+            ))
+
+```
+
+
+
+
+
+
+Dados e Metodologia
+===================================== 
+
+Column {data-width=550}
+-----------------------------------------------------------------------
+
+### Sobre os Paineis
+
+<div id="texto">
+- **Proposições que sofreram alterações de tramitação nos últimos 30 dias** -- Nesse painel, apresentamos o número de [proposições legislativas](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/proposicao) ([PL](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/projeto_de_lei_pl), [PLP](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/projeto_de_lei_complementar_plp), [PEC](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/proposta_de_emenda_a_constituicao_pec) e [MPV](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/medida_provisoria_mpv)) que foram objeto de alterações, ou acões legislativas, nos últimos 30 dias. Essas alterações e acções incluem: [requerimentos](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/requerimento), [emendas](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/emenda), [pareceres](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/parecer) recebidos, entre outros. 
+
+- **Proposições introduzidas no tema por ano** -- Nesse painel, apresentamos o número de proposições introduzidas por ano na Câmara dos Deputados em cada um dos temas de interesse público incluídos no Monitor. 
+
+- **Tramitação das proposições** -- Nesse painel, exibimos informações detalhadas sobre cada uma das proposições que sofreram alteração em suas [tramitações](https://www.congressonacional.leg.br/legislacao-e-publicacoes/glossario/-/definicoes/termo/tramitacao) nos últimos 30 dias. Entre outros, é possível obter seus tipos e números (e.g., PL 7082/2017), o número de ações que sofreram, seus *status*, o local onde estão tramitando e o regime de tramitação. Ao clicar no título de determinada proposição, o monitor redireciona para sua respectiva página na Câmara dos Deputados.
+
+- **Emendas** -- Nesse painel, reportamos informações sobre as emendas recebidas por cada uma das proposições que sofreram alteração em suas tramitações nos últimos 30 dias. Essa informação é separada entre emendas apresentadas e emendas aprovadas.
+</div>
+
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+### Dados e Metodologia
+
+<div id="texto">
+Todos os dados utilizados pelo [Observatório do Legislativo Brasileiro (OLB)](http://olb.org.br/) para produzir esse Monitor são extraídos e atualizados diariamente do serviço de [Dados Abertos da Câmara dos Deputados](https://dadosabertos.camara.leg.br/). Especificamente, o Monitor analisa quatro tipos de proposições: Projetos de Lei (PL), Projetos de Lei Complementar (PLP), Projetos de Emendas à Constituição (PEC) e Medidas Provisórias (MPV). 
+
+Utilizando modernas técnicas de captura e sistematização de dados digitais, cruzamos informações sobre essas proposições, suas tramitações e seus conteúdos para sintetizar o trabalho legislativo na Câmara em determinadas áreas, ou temas, de interesse público.
+</div>
+
+
