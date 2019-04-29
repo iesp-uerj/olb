@@ -68,9 +68,86 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
     dplyr::mutate(data_relacionada = purrr::map(.data$data_relacionada, ~ .$dataApresentacao) %>% as.character %>% as.Date)
 
 
-  # Authors
-
-
   # Return
   list(long = long, props = props, trams = trams, relac = relac)
+}
+
+
+
+
+#' Collect all the data to create OLB's legislative monitor
+#'
+#' @description
+#' \code{build_monitor_data()} create a dataset with the required data to update the OLB's monitor website.
+#'
+#' @importFrom rlang .data
+#'
+#' @export
+
+build_monitor_data <- function(){
+
+
+  # Check whether there are previous data
+  if(!file.exists("dados_monitor.Rda")) {
+
+    # Dates
+    fim <- lubridate::today()
+    ini <- fim - 30
+
+    # Get topics' data
+    ciencia_tecnologia <- get_monitor_data(ini, fim, 62)
+    economia <- get_monitor_data(ini, fim, 40)
+    direitos_humanos <- get_monitor_data(ini, fim, 44)
+    meio_ambiente <- get_monitor_data(ini, fim, 48)
+    previdencia <- get_monitor_data(ini, fim, 52)
+    saude <- get_monitor_data(ini, fim, 56)
+    educacao <- get_monitor_data(ini, fim, 46)
+    defesa_seguranca <- get_monitor_data(ini, fim, 57)
+
+    # Export
+    save(ciencia_tecnologia,
+         economia,
+         direitos_humanos,
+         meio_ambiente,
+         previdencia,
+         saude,
+         educacao,
+         defesa_seguranca,
+         file = paste0("dados_monitor.Rda"))
+
+  } else {
+
+
+    # Manage dates
+    fim <- lubridate::today()
+    inicio_filter <- fim - 30
+    inicio <- as.Date(file.info("dados_monitor.Rda")$ctime)
+    if(fim == inicio) return()
+    inicio <- inicio + 1
+
+    # Load previous data
+    load("dados_monitor.Rda")
+
+    # Get topics' data
+    ciencia_tecnologia <- dplyr::bind_rows(ciencia_tecnologia, get_monitor_data(ini, fim, 62))
+    economia <- dplyr::bind_rows(economia, get_monitor_data(ini, fim, 40))
+    direitos_humanos <- dplyr::bind_rows(direitos_humanos, get_monitor_data(ini, fim, 44))
+    meio_ambiente <- dplyr::bind_rows(meio_ambiente, get_monitor_data(ini, fim, 48))
+    previdencia <- dplyr::bind_rows(previdencia, get_monitor_data(ini, fim, 52))
+    saude <- dplyr::bind_rows(saude, get_monitor_data(ini, fim, 56))
+    educacao <- dplyr::bind_rows(educacao, get_monitor_data(ini, fim, 46))
+    defesa_seguranca <- dplyr::bind_rows(defesa_seguranca, get_monitor_data(ini, fim, 57))
+
+
+    # Export
+    save(ciencia_tecnologia,
+         economia,
+         direitos_humanos,
+         meio_ambiente,
+         previdencia,
+         saude,
+         educacao,
+         defesa_seguranca,
+         file = paste0("dados_monitor.Rda"))
+  }
 }

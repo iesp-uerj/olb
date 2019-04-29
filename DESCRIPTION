@@ -22,7 +22,8 @@ Imports:
     rlang,
     jsonlite,
     magrittr,
-    tidyr
+    tidyr,
+    lubridate
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Suggests: 
