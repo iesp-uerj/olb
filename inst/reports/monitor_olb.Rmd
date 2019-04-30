@@ -151,7 +151,7 @@ portugues <- RJSONIO::fromJSON('{
                    "sSortAscending": ": Ordenar colunas de forma ascendente",
                    "sSortDescending": ": Ordenar colunas de forma descendente"
                    }
-                   }', encoding = "UTF-8")
+                   }', encoding = "latin1")
 
 # Data
 hoje <- format(today(), "%d/%m/%Y")
