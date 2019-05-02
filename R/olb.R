@@ -43,10 +43,6 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
   # Util
   is_zero <- function(x) length(x) == 0
 
-  # Longitudinal data
-  long <- get_proposals_olb(dataApresentacaoInicio = "1998-01-01", dataApresentacaoFim = dataFim, codTema = codTema) %>%
-    dplyr::select(.data$id, .data$siglaTipo, .data$codTipo, .data$numero, .data$ano, .data$ementa)
-
   # Main data
   props <- get_proposals_olb(dataInicio = dataInicio, dataFim = dataFim, codTema = codTema) %>%
     dplyr::select(.data$id, .data$siglaTipo, .data$codTipo, .data$numero, .data$ano, .data$ementa) %>%
@@ -69,5 +65,5 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
 
 
   # Return
-  list(long = long, props = props, trams = trams, relac = relac)
+  list(props = props, trams = trams, relac = relac)
 }
