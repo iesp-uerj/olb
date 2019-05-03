@@ -120,6 +120,14 @@ suppressMessages(library(tidyverse))
 suppressMessages(library(DT))
 
 
+# highchart language --------------------------------------------------------
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$weekdays <- c("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta")
+hcoptslang$shortMonths <- c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+                            "Jul", "Ago", "Set", "Out", "Nov", "Dez")
+options(highcharter.lang = hcoptslang)
+
+
 # Chains --------------------------------------------------------------------
 proposicoes_por_tipo <- . %>%
   group_by(siglaTipo) %>%
@@ -137,8 +145,7 @@ proposicoes_por_tipo <- . %>%
 
 
 proposicoes_por_data <- . %>%
-  count(ano) %>%
-  hchart(type = "line", color = "#28a745", hcaes(y = n, x = ano)) %>%
+  hchart(type = "line", color = "#28a745", hcaes(y = n, x = dataApresentacao)) %>%
   hc_yAxis(title = list(enabled = FALSE),
            labels = list(style = list(fontSize = "16px"))) %>%
   hc_xAxis(title = list(text = "Ano"),
@@ -150,7 +157,7 @@ proposicoes_por_data <- . %>%
 
 tramitacao <- . %>%
   mutate(dataHora = as.Date(dataHora)) %>%
-  filter(dataHora > as.Date("2019-03-05")) %>%
+  filter(dataHora > as.Date(params$ini)) %>%
   group_by(id) %>%
   mutate(acoes = n()) %>%
   arrange(id, -sequencia) %>%
@@ -158,16 +165,25 @@ tramitacao <- . %>%
   summarise(prop = paste0(siglaTipo, " ", numero, "/", ano),
             prop = paste0('<a href="', "https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=", id, '" target="_blank">', prop,'</a>'),
             acoes = acoes[1],
+            ementa = ementa[1],
             ultima_acao = descricaoTramitacao,
             local = siglaOrgao, 
-            regime = regime
-  ) %>%
+            regime = regime) %>%
   arrange(-acoes) %>%
-  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Status", "Órgão", "Regime de tramitação")) %>%
+  setNames(c("id", "Proposição", "Ações nos últimos 30 dias", "Ementa", "Status", "Órgão", "Regime de tramitação")) %>%
   select(-id) %>%
+  mutate(Ementa = ifelse(is.na(Ementa), " ", Ementa)) %>%
   datatable(rownames = F, escape = FALSE,
             style = 'bootstrap',
+            class = "table-hover",
             options = list(
+              columnDefs = list(list(
+                targets = c(1,2),
+                render = JS(
+                  "function(data, type, row, meta) {",
+                  "return type === 'display' && data.length > 80 ?",
+                  "'<span title=\"' + data + '\">' + data.substr(0, 80) + '...</span>' : data;",
+                  "}"))),
               pageLength = 10,
               lengthMenu = c(10, 15, 20),
               dom = 'tip',
@@ -177,7 +193,7 @@ tramitacao <- . %>%
 
 relacionadas <- . %>%
   mutate(data_relacionada = as.Date(data_relacionada)) %>%
-  filter(data_relacionada > as.Date("2019-03-05")) %>%
+  filter(data_relacionada > as.Date(params$ini)) %>%
   group_by(id, siglaTipo, numero, ano) %>%
   summarise(emendas_propostas = sum(relacionadas_siglaTipo %in% c("EMR", "EMC", "SBT", "EMP")),
             emendas_aprovadas = sum(relacionadas_siglaTipo %in% c("SBE-A", "EMC-A", "SBT-A"))) %>%
@@ -189,6 +205,7 @@ relacionadas <- . %>%
   setNames(c("Proposição", "Emendas recebidas nos últimos 30 dias", "Emendas aprovadas nos últimos 30 dias")) %>%
   datatable(rownames = F, escape = FALSE,
             style = 'bootstrap',
+            class = "table-hover",
             options = list(
               pageLength = 10,
               lengthMenu = c(10, 15, 20),
@@ -307,7 +324,7 @@ ciencia_tecnologia$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-ciencia_tecnologia$props %>%
+ciencia_tecnologia$intro %>%
   proposicoes_por_data()
 ```
 
@@ -350,7 +367,7 @@ educacao$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-educacao$props %>%
+educacao$intro %>%
   proposicoes_por_data()
 ```
 
@@ -393,7 +410,7 @@ economia$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-economia$props %>%
+economia$intro %>%
   proposicoes_por_data()
 
 ```
@@ -437,7 +454,7 @@ defesa_seguranca$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-defesa_seguranca$props %>%
+defesa_seguranca$intro %>%
   proposicoes_por_data()
 
 ```
@@ -482,7 +499,7 @@ direitos_humanos$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-direitos_humanos$props %>%
+direitos_humanos$intro %>%
   proposicoes_por_data()
 
 ```
@@ -528,7 +545,7 @@ meio_ambiente$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-meio_ambiente$props %>%
+meio_ambiente$intro %>%
   proposicoes_por_data()
 
 ```
@@ -575,7 +592,7 @@ previdencia$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-previdencia$props %>%
+previdencia$intro %>%
   proposicoes_por_data()
 
 ```
@@ -622,7 +639,7 @@ saude$trams %>%
 ### Proposições introduzidas no tema por ano
 
 ```{r}
-saude$props %>%
+saude$intro %>%
   proposicoes_por_data()
 
 ```

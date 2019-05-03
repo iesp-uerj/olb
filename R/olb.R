@@ -63,7 +63,15 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
     dplyr::mutate(data_relacionada = purrr::map(.data$relacionadas_id, get_proposal)) %>%
     dplyr::mutate(data_relacionada = purrr::map(.data$data_relacionada, ~ .$dataApresentacao) %>% as.character %>% as.Date)
 
+  # Intro
+  intro <- get_proposals_olb(dataApresentacaoInicio = dataInicio, dataApresentacaoFim = dataFim, codTema = codTema) %>%
+    dplyr::select(.data$id, .data$siglaTipo, .data$codTipo, .data$numero, .data$ano, .data$ementa) %>%
+    dplyr::mutate(detalhes = purrr::map(.$id, get_proposal)) %>%
+    dplyr::mutate(dataApresentacao = purrr::map(.$detalhes, ~ .$dataApresentacao) %>% as.character) %>%
+    mutate(dataApresentacao = as.Date(dataApresentacao)) %>%
+    group_by(dataApresentacao) %>%
+    summarise(n = n())
 
   # Return
-  list(props = props, trams = trams, relac = relac)
+  list(props = props, trams = trams, relac = relac, intro = intro)
 }
