@@ -120,14 +120,6 @@ suppressMessages(library(tidyverse))
 suppressMessages(library(DT))
 
 
-# highchart language --------------------------------------------------------
-hcoptslang <- getOption("highcharter.lang")
-hcoptslang$weekdays <- c("Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta")
-hcoptslang$shortMonths <- c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
-                            "Jul", "Ago", "Set", "Out", "Nov", "Dez")
-options(highcharter.lang = hcoptslang)
-
-
 # Chains --------------------------------------------------------------------
 proposicoes_por_tipo <- . %>%
   group_by(siglaTipo) %>%
@@ -145,13 +137,14 @@ proposicoes_por_tipo <- . %>%
 
 
 proposicoes_por_data <- . %>%
+  mutate(dataApresentacao = strftime(dataApresentacao,"%d/%m/%Y")) %>%
   hchart(type = "line", color = "#28a745", hcaes(y = n, x = dataApresentacao)) %>%
   hc_yAxis(title = list(enabled = FALSE),
            labels = list(style = list(fontSize = "16px"))) %>%
-  hc_xAxis(title = list(text = "Ano"),
+  hc_xAxis(title = list(text = "Data"),
            labels = list(style = list(fontSize = "16px"))) %>%
   hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">Proposições</span>:
-             {point.y:,.0f}<br/>", shared = TRUE) %>%
+             {point.y:,.0f}<br/>", shared = TRUE)  %>%
   hc_add_theme(tema_hc)
 
 
@@ -321,7 +314,7 @@ ciencia_tecnologia$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 ciencia_tecnologia$intro %>%
@@ -364,7 +357,7 @@ educacao$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 educacao$intro %>%
@@ -407,7 +400,7 @@ economia$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 economia$intro %>%
@@ -451,7 +444,7 @@ defesa_seguranca$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 defesa_seguranca$intro %>%
@@ -496,7 +489,7 @@ direitos_humanos$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 direitos_humanos$intro %>%
@@ -541,15 +534,13 @@ meio_ambiente$trams %>%
   proposicoes_por_tipo()
 ```
 
-
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 meio_ambiente$intro %>%
   proposicoes_por_data()
 
 ```
-
 
 Column {.tabset data-width=550}
 -----------------------------------------------------------------------
@@ -589,7 +580,7 @@ previdencia$trams %>%
 ```
 
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 previdencia$intro %>%
@@ -636,7 +627,7 @@ saude$trams %>%
   proposicoes_por_tipo()
 ```
 
-### Proposições introduzidas no tema por ano
+### Novas proposições introduzidas no período
 
 ```{r}
 saude$intro %>%
