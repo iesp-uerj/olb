@@ -1,27 +1,3 @@
-#' Collect data to produce legislative reports by topic
-#'
-#' @description
-#' \code{get_track_report_data()} gathers a dataset with all the information required to produce
-#' OLB's legislative reports by topic.
-#'
-#' @param dataInicio Start date (in YYYY-MM-DD format, as \code{character}).
-#' @param dataFim End date (in YYYY-MM-DD format, as \code{character}).
-#' @param codTema Topic code (use \code{\link{list_topics}} to obtain a list of all valid topic codes).
-#'
-#' @return A \code{tibble} with some \code{nested} columns.
-#'
-#' @export
-
-get_track_report_data <- function(dataInicio, dataFim, codTema){
-
-  get_proposals_olb(dataInicio = dataInicio, dataFim = dataFim, codTema = codTema) %>%
-    dplyr::mutate(detalhes = purrr::map(.$id, get_proposal)) %>%
-    dplyr::mutate(autor = purrr::map(.$id, get_proposal_author)) %>%
-    dplyr::mutate(tramitacao = purrr::map(.$id, get_proposal_history)) %>%
-    dplyr::mutate(relacionadas = purrr::map(.$id, get_related_proposals))
-}
-
-
 #' Collect data to update the OLB's legislative monitor
 #'
 #' @description
@@ -68,9 +44,9 @@ get_monitor_data <- function(dataInicio, dataFim, codTema){
     dplyr::select(.data$id, .data$siglaTipo, .data$codTipo, .data$numero, .data$ano, .data$ementa) %>%
     dplyr::mutate(detalhes = purrr::map(.$id, get_proposal)) %>%
     dplyr::mutate(dataApresentacao = purrr::map(.$detalhes, ~ .$dataApresentacao) %>% as.character) %>%
-    mutate(dataApresentacao = as.Date(dataApresentacao)) %>%
-    group_by(dataApresentacao) %>%
-    summarise(n = n())
+    dplyr::mutate(dataApresentacao = as.Date(.data$dataApresentacao)) %>%
+    dplyr::group_by(.data$dataApresentacao) %>%
+    dplyr::summarise(n = dplyr::n())
 
   # Return
   list(props = props, trams = trams, relac = relac, intro = intro)
